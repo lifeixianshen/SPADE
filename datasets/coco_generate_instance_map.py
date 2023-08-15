@@ -3,6 +3,7 @@ Copyright (C) 2019 NVIDIA Corporation.  All rights reserved.
 Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 """
 
+
 import os
 import argparse
 from pycocotools.coco import COCO
@@ -20,9 +21,9 @@ parser.add_argument('--output_instance_dir', type=str, default="./train_inst/",
 
 opt = parser.parse_args()
 
-print("annotation file at {}".format(opt.annotation_file))
-print("input label maps at {}".format(opt.input_label_dir))
-print("output dir at {}".format(opt.output_instance_dir))
+print(f"annotation file at {opt.annotation_file}")
+print(f"input label maps at {opt.input_label_dir}")
+print(f"output dir at {opt.output_instance_dir}")
 
 # initialize COCO api for instance annotations
 coco = COCO(opt.annotation_file)
@@ -33,7 +34,7 @@ cats = coco.loadCats(coco.getCatIds())
 imgIds = coco.getImgIds(catIds=coco.getCatIds(cats))
 for ix, id in enumerate(imgIds):
     if ix % 50 == 0:
-        print("{} / {}".format(ix, len(imgIds)))
+        print(f"{ix} / {len(imgIds)}")
     img_dict = coco.loadImgs(id)[0]
     filename = img_dict["file_name"].replace("jpg", "png")
     label_name = os.path.join(opt.input_label_dir, filename)
@@ -47,7 +48,7 @@ for ix, id in enumerate(imgIds):
         if type(ann["segmentation"]) == list:
             if "segmentation" in ann:
                 for seg in ann["segmentation"]:
-                    poly = np.array(seg).reshape((int(len(seg) / 2), 2))
+                    poly = np.array(seg).reshape((len(seg) // 2, 2))
                     rr, cc = polygon(poly[:, 1] - 1, poly[:, 0] - 1)
                     img[rr, cc] = count
                 count += 1

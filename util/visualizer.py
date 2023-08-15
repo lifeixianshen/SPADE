@@ -30,7 +30,7 @@ class Visualizer():
         if self.use_html:
             self.web_dir = os.path.join(opt.checkpoints_dir, opt.name, 'web')
             self.img_dir = os.path.join(self.web_dir, 'images')
-            print('create web directory %s...' % self.web_dir)
+            print(f'create web directory {self.web_dir}...')
             util.mkdirs([self.web_dir, self.img_dir])
         if opt.isTrain:
             self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
@@ -43,7 +43,7 @@ class Visualizer():
 
         ## convert tensors to numpy arrays
         visuals = self.convert_visuals_to_numpy(visuals)
-                
+
         if self.tf_log: # show images in tensorboard output
             img_summaries = []
             for label, image_numpy in visuals.items():
@@ -77,7 +77,7 @@ class Visualizer():
                     util.save_image(image_numpy, img_path)
 
             # update website
-            webpage = html.HTML(self.web_dir, 'Experiment name = %s' % self.name, refresh=5)
+            webpage = html.HTML(self.web_dir, f'Experiment name = {self.name}', refresh=5)
             for n in range(epoch, 0, -1):
                 webpage.add_header('epoch [%d]' % n)
                 ims = []
@@ -128,7 +128,7 @@ class Visualizer():
     def convert_visuals_to_numpy(self, visuals):
         for key, t in visuals.items():
             tile = self.opt.batchSize > 8
-            if 'input_label' == key:
+            if key == 'input_label':
                 t = util.tensor2label(t, self.opt.label_nc + 2, tile=tile)
             else:
                 t = util.tensor2im(t, tile=tile)
@@ -138,7 +138,7 @@ class Visualizer():
     # save image to the disk
     def save_images(self, webpage, visuals, image_path):        
         visuals = self.convert_visuals_to_numpy(visuals)        
-        
+
         image_dir = webpage.get_image_dir()
         short_path = ntpath.basename(image_path[0])
         name = os.path.splitext(short_path)[0]
@@ -149,7 +149,7 @@ class Visualizer():
         links = []
 
         for label, image_numpy in visuals.items():
-            image_name = os.path.join(label, '%s.png' % (name))
+            image_name = os.path.join(label, f'{name}.png')
             save_path = os.path.join(image_dir, image_name)
             util.save_image(image_numpy, save_path, create_dir=True)
 
